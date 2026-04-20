@@ -28,13 +28,12 @@
     "secure-db": "node scripts/secure-db.js"
   },
   "devDependencies": {
-    "@better-auth/cli": "^1.4.21",
     "better-sqlite3": "^12.9.0",
     "turbo": "^2.8.12"
   },
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "yarn@4.14.1",
+  "packageManager": "yarn@4.13.0",
   "type": "module"
 }
