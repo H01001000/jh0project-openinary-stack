@@ -1,0 +1,34 @@
+{
+  "name": "@jh0project/imgproxy-proxy",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "swc src --out-dir dist --strip-leading-paths",
+    "build:types": "yarn build",
+    "lint": "biome check",
+    "lint:fix": "biome check --fix",
+    "start": "node dist/server.js",
+    "dev": "nodemon --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm --watch src --enable-source-maps src/server.ts",
+    "test:types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.922.0",
+    "@aws-sdk/lib-storage": "^3.922.0",
+    "@dotenvx/dotenvx": "^1.31.3",
+    "cors": "^2.8.5",
+    "express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.7.9",
+    "@swc/core": "^1.15.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.10.1",
+    "nodemon": "^3.1.9",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "yarn@4.4.1"
+}
