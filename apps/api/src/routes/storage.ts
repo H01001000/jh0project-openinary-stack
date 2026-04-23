@@ -291,7 +291,7 @@ storageRoute.get("/*", async (c) => {
 /**
  * Delete a file from storage
  * DELETE /storage/*
- * This now performs a complete deletion including cache and jobs
+ * This now performs a complete deletion including cache cleanup.
  */
 storageRoute.delete("/*", async (c) => {
   const requestPath = c.req.path;
@@ -355,7 +355,6 @@ storageRoute.delete("/*", async (c) => {
           message: "Asset deleted but some cleanup operations failed",
           details: {
             originalFileDeleted: result.originalFileDeleted,
-            jobsDeleted: result.jobsDeleted,
             localCacheFilesDeleted: result.localCacheFilesDeleted,
             cloudCacheFilesDeleted: result.cloudCacheFilesDeleted,
             errors: result.errors,
@@ -369,7 +368,6 @@ storageRoute.delete("/*", async (c) => {
       success: true,
       message: "Asset deleted successfully",
       details: {
-        jobsDeleted: result.jobsDeleted,
         localCacheFilesDeleted: result.localCacheFilesDeleted,
         cloudCacheFilesDeleted: result.cloudCacheFilesDeleted,
       },

@@ -244,11 +244,12 @@ export function MediaGrid({
   }
 
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-  // Use dedicated transform base URL (empty in Docker, falls back to apiBaseUrl without /api)
-  const transformBaseUrl =
-    process.env.NEXT_PUBLIC_TRANSFORM_BASE_URL !== undefined
-      ? process.env.NEXT_PUBLIC_TRANSFORM_BASE_URL
-      : apiBaseUrl.replace(/\/api$/, "");
+  const assetBaseUrl = apiBaseUrl;
+  const getDownloadUrl = (assetPath: string) =>
+    `${assetBaseUrl}/download/${assetPath
+      .split("/")
+      .map((segment) => encodeURIComponent(segment))
+      .join("/")}`;
 
   const handleFolderClick = (folderPath: string) => {
     setFolderPath(folderPath);
@@ -256,12 +257,7 @@ export function MediaGrid({
 
   // Preload preview when hovering over a media item
   const handleMediaHover = (media: MediaFile) => {
-    // For images: load the transformed image
-    // For videos: preload the full video (not the thumbnail, which is already loaded)
-    const previewUrl =
-      media.type === "image"
-        ? `${transformBaseUrl}/t/w_500,h_500,q_80/${media.path}`
-        : `${transformBaseUrl}/t/${media.path}`;
+    const previewUrl = getDownloadUrl(media.path);
     preloadMedia(previewUrl, media.type);
   };
 
@@ -296,7 +292,7 @@ export function MediaGrid({
                   {folderImages.map((src, i) => (
                     <div key={i} className="overflow-hidden">
                       <img
-                        src={`${transformBaseUrl}/t/w_250,h_250,q_70/${src}`}
+                        src={getDownloadUrl(src)}
                         alt=""
                         className="w-full h-full object-cover"
                         loading="lazy"
@@ -308,7 +304,7 @@ export function MediaGrid({
                 <div className="grid grid-cols-2 gap-0.5 w-full h-full">
                   <div className="overflow-hidden row-span-2">
                     <img
-                      src={`${transformBaseUrl}/t/w_250,h_500,q_70/${folderImages[0]}`}
+                      src={getDownloadUrl(folderImages[0])}
                       alt=""
                       className="w-full h-full object-cover"
                       loading="lazy"
@@ -317,7 +313,7 @@ export function MediaGrid({
                   {folderImages.slice(1).map((src, i) => (
                     <div key={i} className="overflow-hidden">
                       <img
-                        src={`${transformBaseUrl}/t/w_250,h_250,q_70/${src}`}
+                        src={getDownloadUrl(src)}
                         alt=""
                         className="w-full h-full object-cover"
                         loading="lazy"
@@ -330,7 +326,7 @@ export function MediaGrid({
                   {folderImages.map((src, i) => (
                     <div key={i} className="overflow-hidden">
                       <img
-                        src={`${transformBaseUrl}/t/w_250,h_500,q_70/${src}`}
+                        src={getDownloadUrl(src)}
                         alt=""
                         className="w-full h-full object-cover"
                         loading="lazy"
@@ -340,7 +336,7 @@ export function MediaGrid({
                 </div>
               ) : folderImages.length === 1 ? (
                 <img
-                  src={`${transformBaseUrl}/t/w_500,h_500,q_70/${folderImages[0]}`}
+                  src={getDownloadUrl(folderImages[0])}
                   alt=""
                   className="w-full h-full object-cover"
                   loading="lazy"
@@ -369,12 +365,7 @@ export function MediaGrid({
 
       {/* Render media files */}
       {files.map((media) => {
-        // For images: resize and optimize
-        // For videos: extract thumbnail at 1 second as jpg image with crop mode to avoid stretching
-        const thumbnailUrl =
-          media.type === "image"
-            ? `${transformBaseUrl}/t/w_500,h_500,q_80/${media.path}`
-            : `${transformBaseUrl}/t/t_true,tt_5,f_webp,w_500,h_500,c_fill,q_80/${media.path}`;
+        const thumbnailUrl = getDownloadUrl(media.path);
         const isHovered = hoveredId === media.id;
 
         return (

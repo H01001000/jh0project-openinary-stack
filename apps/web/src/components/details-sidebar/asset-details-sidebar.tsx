@@ -12,7 +12,6 @@ import { Sidebar } from "../ui/sidebar"
 import { useAssetDetails } from "./use-asset-details"
 import { AssetPreview } from "./asset-preview"
 import { AssetDetailsTab } from "./asset-details-tab"
-import { AssetTransformationsTab } from "./asset-transformations-tab"
 import { AssetMetadataTab } from "./asset-metadata-tab"
 
 export function AssetDetailsSidebar({
@@ -40,9 +39,6 @@ export function AssetDetailsSidebar({
     isDeleting,
     mediaUrl,
     previewUrl,
-    transformBaseUrl,
-    videoStatus,
-    videoProgress,
     handleCopyUrl,
     handleDownload,
     handleOpenInNewTab,
@@ -89,9 +85,8 @@ export function AssetDetailsSidebar({
             <Separator />
 
             <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="transformations">Transformations</TabsTrigger>
                 <TabsTrigger value="metadata">Metadata</TabsTrigger>
               </TabsList>
 
@@ -103,17 +98,11 @@ export function AssetDetailsSidebar({
                   createdAt={createdAt}
                   mediaUrl={mediaUrl}
                   isDeleting={isDeleting}
-                  videoStatus={videoStatus}
-                  videoProgress={videoProgress}
                   onCopyUrl={handleCopyUrl}
                   onDownload={handleDownload}
                   onOpenInNewTab={handleOpenInNewTab}
                   onDelete={handleDelete}
                 />
-              </TabsContent>
-
-              <TabsContent value="transformations" className="space-y-4 mt-4">
-                <AssetTransformationsTab asset={asset} apiBaseUrl={transformBaseUrl} />
               </TabsContent>
 
               <TabsContent value="metadata" className="space-y-4 mt-4">

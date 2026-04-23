@@ -3,12 +3,10 @@ import path from "path";
 import logger, { serializeError } from "./logger";
 import { CloudStorage } from "./storage/cloud-storage";
 import { deleteCachedFiles } from "./cache";
-import { deleteJobsByFilePath } from "./video/queue-db";
 
 export interface DeleteAssetResult {
   success: boolean;
   originalFileDeleted: boolean;
-  jobsDeleted: number;
   localCacheFilesDeleted: number;
   cloudCacheFilesDeleted: number;
   errors: string[];
@@ -25,7 +23,6 @@ export async function deleteAssetCompletely(
   const result: DeleteAssetResult = {
     success: false,
     originalFileDeleted: false,
-    jobsDeleted: 0,
     localCacheFilesDeleted: 0,
     cloudCacheFilesDeleted: 0,
     errors: [],
@@ -62,23 +59,7 @@ export async function deleteAssetCompletely(
       return result;
     }
 
-    // Step 2: Delete all video jobs associated with this file
-    try {
-      result.jobsDeleted = deleteJobsByFilePath(filePath);
-      logger.debug(
-        { filePath, count: result.jobsDeleted },
-        "Deleted video jobs",
-      );
-    } catch (error) {
-      const errorMsg = `Failed to delete jobs: ${error instanceof Error ? error.message : "Unknown error"}`;
-      result.errors.push(errorMsg);
-      logger.error(
-        { error: serializeError(error), filePath },
-        "Failed to delete video jobs",
-      );
-    }
-
-    // Step 3: Delete local cache files
+    // Step 2: Delete local cache files
     try {
       result.localCacheFilesDeleted = await deleteCachedFiles(filePath);
       logger.debug(
@@ -94,7 +75,7 @@ export async function deleteAssetCompletely(
       );
     }
 
-    // Step 4: Delete original file and cloud cache (if using cloud storage)
+    // Step 3: Delete original file and cloud cache (if using cloud storage)
     if (storage) {
       try {
         // Delete cloud cached transformations
@@ -161,7 +142,6 @@ export async function deleteAssetCompletely(
         filePath,
         success: result.success,
         originalFileDeleted: result.originalFileDeleted,
-        jobsDeleted: result.jobsDeleted,
         localCacheFilesDeleted: result.localCacheFilesDeleted,
         cloudCacheFilesDeleted: result.cloudCacheFilesDeleted,
         errorCount: result.errors.length,

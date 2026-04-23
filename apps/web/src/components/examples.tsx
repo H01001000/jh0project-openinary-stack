@@ -6,24 +6,22 @@ import { useMemo } from "react";
 export function Examples() {
   const exampleUrls = useMemo(() => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || ""
-    // In Docker, transform routes are exposed directly at /t (without /api prefix)
-    const baseUrl = apiBaseUrl === "/api" ? "" : apiBaseUrl.replace(/\/api$/, "")
     return [
       {
-        title: "Resize image to 300x200",
-        url: `${baseUrl}/t/w_300,h_200/image.png`,
+        title: "Download original image",
+        url: `${apiBaseUrl}/download/gallery/image.png`,
       },
       {
-        title: "Convert to WebP with 80% quality",
-        url: `${baseUrl}/t/f_webp,q_80/image.png`,
+        title: "Download nested path file",
+        url: `${apiBaseUrl}/download/folder%20name/photo.jpg`,
       },
       {
-        title: "Smart crop to square with face detection",
-        url: `${baseUrl}/t/w_400,h_400,c_fill,g_face/image.png`,
+        title: "Download original video",
+        url: `${apiBaseUrl}/download/videos/clip.mp4`,
       },
       {
-        title: "Resize video with 80% quality",
-        url: `${baseUrl}/t/w_640,h_360,q_80/video.mp4`,
+        title: "Get file metadata",
+        url: `${apiBaseUrl}/storage/gallery/image.png/metadata`,
       },
     ];
   }, []);
