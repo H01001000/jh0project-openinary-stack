@@ -1,0 +1,16 @@
+[package]
+name = "imgproxy-proxy"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+axum = "0.8"
+http = "1"
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+reqwest = { version = "0.13.3", features = ["gzip", "brotli", "deflate", "json", "query", "stream", "zstd", "form", "multipart"] }
+dotenv = "0.15.0"

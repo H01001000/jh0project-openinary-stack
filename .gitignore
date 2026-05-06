@@ -21,6 +21,7 @@ apps/api/cache/
 dist/
 build/
 out/
+target/
 
 # Runtime data
 pids

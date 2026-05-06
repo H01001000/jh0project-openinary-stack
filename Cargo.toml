@@ -1,0 +1,6 @@
+[workspace]
+resolver = "3"
+members = ["apps/imgproxy-proxy"]
+
+[workspace.package]
+edition = "2024"
