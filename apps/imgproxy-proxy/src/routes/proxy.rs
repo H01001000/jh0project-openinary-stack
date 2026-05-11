@@ -52,7 +52,7 @@ pub async fn unsafe_image(
         .send()
         .await;
 
-    let s3_result = match s3_result {
+    match s3_result {
         Ok(s3_result) => {
             tracing::info!(
                 path = %path,
@@ -83,27 +83,24 @@ pub async fn unsafe_image(
 
             return Ok(response);
         }
-        Err(e) => e,
+        Err(e) => {
+            if e.as_service_error().is_some_and(|e| e.is_no_such_key()) {
+                tracing::info!(
+                    path = %path,
+                    request_hash = %request_hash,
+                    "Cache miss for key"
+                );
+            } else {
+                tracing::error!(
+                    error = ?e,
+                    path = %path,
+                    request_hash = %request_hash,
+                    "Failed to get object from S3"
+                );
+                return Err(AppError::UpstreamError(StatusCode::INTERNAL_SERVER_ERROR));
+            }
+        }
     };
-
-    if s3_result
-        .as_service_error()
-        .is_some_and(|e| e.is_no_such_key())
-    {
-        tracing::info!(
-            path = %path,
-            request_hash = %request_hash,
-            "Cache miss for key"
-        );
-    } else {
-        tracing::error!(
-            error = ?s3_result,
-            path = %path,
-            request_hash = %request_hash,
-            "Failed to get object from S3"
-        );
-        return Err(AppError::UpstreamError(StatusCode::INTERNAL_SERVER_ERROR));
-    }
 
     let resp = CLIENT
         .get(format!("https://img.jh0project.com/{}", path))
