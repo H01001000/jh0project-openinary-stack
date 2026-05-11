@@ -1,4 +1,4 @@
-use axum::{http::StatusCode, response::IntoResponse, Json};
+use axum::{Json, http::StatusCode, response::IntoResponse};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -8,16 +8,22 @@ pub struct ErrorResponse {
 
 #[derive(Debug, thiserror::Error)]
 pub enum AppError {
-    #[error("upstream proxy is not configured")]
-    MissingUpstream,
+    #[error("upstream returned error status: {0}")]
+    UpstreamError(StatusCode),
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
-        let status = match self {
-            AppError::MissingUpstream => StatusCode::NOT_IMPLEMENTED,
+        let status: StatusCode = match self {
+            AppError::UpstreamError(code) => code,
         };
 
-        (status, Json(ErrorResponse { error: self.to_string() })).into_response()
+        (
+            status,
+            Json(ErrorResponse {
+                error: self.to_string(),
+            }),
+        )
+            .into_response()
     }
 }
